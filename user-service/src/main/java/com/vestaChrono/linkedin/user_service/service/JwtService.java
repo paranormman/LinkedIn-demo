@@ -16,10 +16,10 @@ import java.util.Set;
 public class JwtService {
 
     @Value("${jwt.secretKey}")
-    private String JwtSecretKey;
+    private String jwtSecretKey;
 
     private SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(JwtSecretKey.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateAccessToken(User user) {
