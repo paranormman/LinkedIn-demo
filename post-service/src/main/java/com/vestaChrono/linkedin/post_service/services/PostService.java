@@ -1,5 +1,6 @@
 package com.vestaChrono.linkedin.post_service.services;
 
+import com.vestaChrono.linkedin.post_service.auth.UserContextHolder;
 import com.vestaChrono.linkedin.post_service.dto.PostCreateRequestDto;
 import com.vestaChrono.linkedin.post_service.dto.PostDto;
 import com.vestaChrono.linkedin.post_service.entity.Post;
@@ -35,6 +36,8 @@ public class PostService {
 
     public PostDto getPostById(Long postId) {
         log.debug("Retrieving post with Id: {}", postId);
+
+        Long userId = UserContextHolder.getCurrentUserid();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
         return modelMapper.map(post, PostDto.class);
