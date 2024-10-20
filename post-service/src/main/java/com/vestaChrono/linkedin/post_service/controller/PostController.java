@@ -27,7 +27,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
+    public ResponseEntity<PostDto> getPost(@PathVariable Long postId,
+                                           @RequestHeader(name = "X-User-Id") String userid) {
         PostDto postDto = postService.getPostById(postId);
         return ResponseEntity.ok(postDto);
 //        return post != null ? ResponseEntity.ok(post) : ResponseEntity.notFound().build();  //ternary operation ? :

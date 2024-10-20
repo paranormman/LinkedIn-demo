@@ -18,6 +18,7 @@ spring:
             - Path=/api/v1/posts/**
           filters:
             - StripPrefix=2
+            - name: AuthenticationFilter
 
         - id: connections-service
           uri: lb://CONNECTIONS-SERVICE
@@ -25,6 +26,7 @@ spring:
             - Path=/api/v1/connections/**
           filters:
             - StripPrefix=2
+            - name: AuthenticationFilter
 
 server:
   port: 8080
@@ -34,3 +36,5 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+jwt.secretKey: kjhsouLBLUYP38HLHLjljklbljnclakshlkewhliwvheichISHDLKSBDahefiunq34898lkqjn398rj
