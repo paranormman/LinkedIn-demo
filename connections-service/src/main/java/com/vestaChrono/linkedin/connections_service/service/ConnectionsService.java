@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface ConnectionsService {
 
-    List<Person> getFirsDegreeConnection(Long userId);
+    List<Person> getFirsDegreeConnection();
 }

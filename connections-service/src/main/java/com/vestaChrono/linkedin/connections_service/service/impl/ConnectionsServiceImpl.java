@@ -1,5 +1,6 @@
 package com.vestaChrono.linkedin.connections_service.service.impl;
 
+import com.vestaChrono.linkedin.connections_service.auth.UserContextHolder;
 import com.vestaChrono.linkedin.connections_service.entity.Person;
 import com.vestaChrono.linkedin.connections_service.repository.PersonRepository;
 import com.vestaChrono.linkedin.connections_service.service.ConnectionsService;
@@ -16,7 +17,9 @@ public class ConnectionsServiceImpl implements ConnectionsService {
 
     private final PersonRepository personRepository;
 
-    public List<Person> getFirsDegreeConnection(Long userId) {
+    public List<Person> getFirsDegreeConnection() {
+
+        Long userId = UserContextHolder.getCurrentUserid();
         log.info("Getting first degree connects for user with id: {}", userId);
 
         return personRepository.getFirstDegreeConnections(userId);
