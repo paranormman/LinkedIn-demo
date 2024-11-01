@@ -20,4 +20,18 @@ public class ConnectionsController {
         return ResponseEntity.ok(connectionsService.getFirsDegreeConnection());
     }
 
+    @PostMapping("/request/{userId}")
+    public ResponseEntity<Boolean> secondConnectionRequest(@PathVariable Long userId) {
+        return ResponseEntity.ok(connectionsService.sendConnectionRequest(userId));
+    }
+
+    @PostMapping("/accept/{userId}")
+    public ResponseEntity<Boolean> acceptConnectionRequest(@PathVariable Long userId) {
+        return ResponseEntity.ok(connectionsService.acceptConnectionRequest(userId));
+    }
+
+    @PostMapping("/reject/{userId}")
+    public ResponseEntity<Boolean> rejectConnectionRequest(@PathVariable Long userId) {
+        return ResponseEntity.ok(connectionsService.rejectConnectionRequest(userId));
+    }
 }
