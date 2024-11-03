@@ -2,7 +2,6 @@ package com.vestaChrono.linkedin.post_service.services;
 
 import com.vestaChrono.linkedin.post_service.auth.UserContextHolder;
 import com.vestaChrono.linkedin.post_service.clients.ConnectionClient;
-import com.vestaChrono.linkedin.post_service.dto.PersonDto;
 import com.vestaChrono.linkedin.post_service.dto.PostCreateRequestDto;
 import com.vestaChrono.linkedin.post_service.dto.PostDto;
 import com.vestaChrono.linkedin.post_service.entity.Post;

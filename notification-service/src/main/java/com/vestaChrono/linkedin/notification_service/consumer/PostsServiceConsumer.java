@@ -5,6 +5,7 @@ import com.vestaChrono.linkedin.notification_service.clients.ConnectionClient;
 import com.vestaChrono.linkedin.notification_service.dto.PersonDto;
 import com.vestaChrono.linkedin.notification_service.entity.Notification;
 import com.vestaChrono.linkedin.notification_service.repository.NotificationRepository;
+import com.vestaChrono.linkedin.notification_service.service.SendNotification;
 import com.vestaChrono.linkedin.post_service.event.PostCreatedEvent;
 import com.vestaChrono.linkedin.post_service.event.PostLikedEvent;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import java.util.List;
 public class PostsServiceConsumer {
 
     private final ConnectionClient connectionClient;
-    private final NotificationRepository notificationRepository;
+    private final SendNotification sendNotification;
 
     @KafkaListener(topics = "post-created-topic")
     public void handlePostCreated(PostCreatedEvent postCreatedEvent) {
@@ -31,7 +32,7 @@ public class PostsServiceConsumer {
 
 //        Send Notification to all the first-degree connections of the creator.
         for (PersonDto connection: connections) {
-            sendNotification(connection.getUserId(), "Your connection "+ postCreatedEvent.getCreatorId()+ " has created a post," +
+            sendNotification.send(connection.getUserId(), "Your connection "+ postCreatedEvent.getCreatorId()+ " has created a post," +
                     " check it out");
         }
 
@@ -45,18 +46,8 @@ public class PostsServiceConsumer {
         String message = String.format("Your post, %d has been liked by %d", postLikedEvent.getPostId(),
                 postLikedEvent.getLikedByUserId());
 
-        sendNotification(postLikedEvent.getCreatorId(), message);
+        sendNotification.send(postLikedEvent.getCreatorId(), message);
 
-    }
-
-    public void sendNotification(Long userId, String message) {
-//        creating a notification entity object
-        Notification notification = new Notification();
-        notification.setMessage(message);
-        notification.setUserId(userId);
-
-//        save the set notification in the repository so that the user can access it later.
-        notificationRepository.save(notification);
     }
 
 }

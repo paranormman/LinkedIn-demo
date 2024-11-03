@@ -2,12 +2,14 @@ package com.vestaChrono.linkedin.connections_service.service.impl;
 
 import com.vestaChrono.linkedin.connections_service.auth.UserContextHolder;
 import com.vestaChrono.linkedin.connections_service.entity.Person;
+import com.vestaChrono.linkedin.connections_service.event.AcceptConnectionRequest;
+import com.vestaChrono.linkedin.connections_service.event.SendConnectionRequestEvent;
 import com.vestaChrono.linkedin.connections_service.repository.PersonRepository;
 import com.vestaChrono.linkedin.connections_service.service.ConnectionsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.List;
 
@@ -17,6 +19,8 @@ import java.util.List;
 public class ConnectionsServiceImpl implements ConnectionsService {
 
     private final PersonRepository personRepository;
+    private final KafkaTemplate<Long, SendConnectionRequestEvent> sendRequestKafkaTemplate;
+    private final KafkaTemplate<Long, AcceptConnectionRequest> acceptRequestKafkaTemplate;
 
     public List<Person> getFirsDegreeConnection() {
 
@@ -47,6 +51,15 @@ public class ConnectionsServiceImpl implements ConnectionsService {
 //        sending the connection request
         log.info("Successfully sent the connection request");
         personRepository.addConnectionRequest(senderId, receiverId);
+
+//        send notification to the user to send the connection request.
+        log.info("Successfully sent connection request to the user sender:{}, receiver: {}", senderId, receiverId);
+        AcceptConnectionRequest acceptConnectionRequest = AcceptConnectionRequest.builder()
+                .senderId(senderId)
+                .receiverId(receiverId)
+                .build();
+        acceptRequestKafkaTemplate.send("accept-connection-request-topic", acceptConnectionRequest);
+
         return true;
     }
 
@@ -61,6 +74,15 @@ public class ConnectionsServiceImpl implements ConnectionsService {
         }
 
         personRepository.acceptConnectionRequest(senderId, receiverId);
+
+//        send notification to the users using the topic created
+        log.info("successfully accepted the connection request, sender: {}, receiver: {}", senderId, receiverId );
+        SendConnectionRequestEvent sendConnectionRequestEvent = SendConnectionRequestEvent.builder()
+                .senderId(senderId)
+                .receiverId(receiverId)
+                .build();
+        sendRequestKafkaTemplate.send("send-connection-request-topic", sendConnectionRequestEvent);
+
         return true;
     }
 
