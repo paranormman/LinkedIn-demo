@@ -53,14 +53,15 @@ public class ConnectionsServiceImpl implements ConnectionsService {
         personRepository.addConnectionRequest(senderId, receiverId);
 
 //        send notification to the user to send the connection request.
-        log.info("Successfully sent connection request to the user sender:{}, receiver: {}", senderId, receiverId);
-        AcceptConnectionRequest acceptConnectionRequest = AcceptConnectionRequest.builder()
+        log.info("successfully accepted the connection request, sender: {}, receiver: {}", senderId, receiverId );
+        SendConnectionRequestEvent sendConnectionRequestEvent = SendConnectionRequestEvent.builder()
                 .senderId(senderId)
                 .receiverId(receiverId)
                 .build();
-        acceptRequestKafkaTemplate.send("accept-connection-request-topic", acceptConnectionRequest);
+        sendRequestKafkaTemplate.send("send-connection-request-topic", sendConnectionRequestEvent);
 
         return true;
+
     }
 
     @Override
@@ -76,14 +77,15 @@ public class ConnectionsServiceImpl implements ConnectionsService {
         personRepository.acceptConnectionRequest(senderId, receiverId);
 
 //        send notification to the users using the topic created
-        log.info("successfully accepted the connection request, sender: {}, receiver: {}", senderId, receiverId );
-        SendConnectionRequestEvent sendConnectionRequestEvent = SendConnectionRequestEvent.builder()
+        log.info("Successfully sent connection request to the user sender:{}, receiver: {}", senderId, receiverId);
+        AcceptConnectionRequest acceptConnectionRequest = AcceptConnectionRequest.builder()
                 .senderId(senderId)
                 .receiverId(receiverId)
                 .build();
-        sendRequestKafkaTemplate.send("send-connection-request-topic", sendConnectionRequestEvent);
+        acceptRequestKafkaTemplate.send("accept-connection-request-topic", acceptConnectionRequest);
 
         return true;
+
     }
 
     @Override
