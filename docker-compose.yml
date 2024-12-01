@@ -26,7 +26,7 @@ services:
     container_name: kafbat-ui
     image: ghcr.io/kafbat/kafka-ui:latest
     ports:
-      - "8090-8080"
+      - "8090-8090"
     depends_on:
       - kafka
     environment:
@@ -70,7 +70,18 @@ services:
     volumes:
       - user-db-data:/var/lib/postgresql/data
 
-
+  connections-db:
+    image: neo4j
+    container_name: connections-db
+    environment:
+      - NEO4J_AUTH=neo4j/password   #Set your username and password
+    ports:
+      - "7474:7474"   #HTTP ports
+      - "7687:7687"   #Bolt port
+    volumes:
+      - connections-db-data:/data   #Persist data
+    networks:
+      - linkedin-network
 
   discovery-server:
     image: shivmanoj/linkedin-app/discovery-server
@@ -110,6 +121,24 @@ services:
       - discovery-server
       - kafka
 
+  connections-service:
+    image: shivmanoj/linkedin-app/connections-service
+    container_name: connections-service
+    networks:
+      - linkedin-network
+    depends_on:
+      - connections-db
+      - discovery-server
+      - kafka
+
+  api-gateway:
+    image: shivmanoj/linkedin-app/api-gateway
+    container_name: api-gateway
+    networks:
+      - linkedin-network
+    depends_on:
+      - discovery-server
+
 networks:
   linkedin-network:
 
@@ -118,3 +147,4 @@ volumes:
   notification-db-data:
   user-db-data:
   posts-db-data:
+  connections-db-data:
