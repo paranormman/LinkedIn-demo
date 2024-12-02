@@ -134,6 +134,8 @@ services:
   api-gateway:
     image: shivmanoj/linkedin-app/api-gateway
     container_name: api-gateway
+    ports:
+      - "8080:8080"
     networks:
       - linkedin-network
     depends_on:
